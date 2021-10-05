@@ -6,5 +6,6 @@ int main(){
     return 0;
 }
 
-// PATH to run 
-// cd "/Users/jeandtx/Documents/CODE/L2/S1/Pastry-Project/" && gcc main.c -o main && "/Users/jeandtx/Documents/CODE/L2/S1/Pastry-Project/"main
+
+git config --global user.email "tristan.duong36@hotmail.fr"
+git config --global user.name "StritanS"
