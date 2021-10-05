@@ -8,3 +8,4 @@ int main(){
 
 // PATH to run 
 // cd "/Users/jeandtx/Documents/CODE/L2/S1/Pastry-Project/" && gcc main.c -o main && "/Users/jeandtx/Documents/CODE/L2/S1/Pastry-Project/"main
+//Tristan choisit un 4eme
