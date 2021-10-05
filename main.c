@@ -7,5 +7,3 @@ int main(){
 }
 
 
-git config --global user.email "tristan.duong36@hotmail.fr"
-git config --global user.name "StritanS"
