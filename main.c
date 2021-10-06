@@ -21,7 +21,8 @@ typedef struct Element_cake
 } Element_cake;
 
 typedef struct Order_Queue
-{ // TODO
+{
+    Element_str *list;
 } Order_Queue;
 
 typedef struct Taste_Stack
@@ -63,9 +64,23 @@ void display_tastes(Element_str *t)
     }
 }
 
-// void pass_order(char order[50], Order_Queue *f_orders){
+void pass_order(char order[50], Order_Queue *f_orders)
+{
+    Order_Queue *temp = f_orders;
 
-// };
+    Element_str *new_el = malloc(sizeof(Element_str));
+    if (temp->list == NULL)
+    {
+        strcpy(new_el->text, order);
+        temp->list = new_el;
+    }
+    else
+    {
+        strcpy(new_el->text, order);
+        new_el->next = temp->list;
+        temp->list = new_el;
+    }
+}
 
 // Element_str *process_order(Order_Queue *q_orders){
 
@@ -94,7 +109,12 @@ int main()
     l_tastes = initialize_tastes();
     display_tastes(l_tastes);
 
-    Order_Queue *q_orders;
+    Order_Queue *q_orders = malloc(sizeof(Order_Queue));
+
+    pass_order("forder1", q_orders);
+    pass_order("forder2", q_orders);
+    pass_order("forder3", q_orders);
+    printf("%s, %s, %s\n", q_orders->list->text, q_orders->list->next->text, q_orders->list->next->next->text);
     Tasting_Queue *q_tasting;
 
     return 0;
