@@ -56,10 +56,24 @@ Element_str *initialize_tastes()
     return new_el;
 };
 
+/* algo len_f_orders(f_order : ref to structure Order_Queue):int
+return the size of a linked list made of order_queue
+*/
+int len_f_orders(Order_Queue *f_orders)
+{
+    Order_Queue temp = *f_orders;
+    int nb = 0;
+    while (temp.list != NULL)
+    {
+        nb++;
+        temp.list = temp.list->next;
+    }
+    return nb;
+}
+
 /*pass_order(char order[50], Order_Queue *f_orders)
 take a list of orders and add an order to it
 */
-
 void pass_order(char order[50], Order_Queue *f_orders)
 {
     if (len_f_orders(f_orders) < 10)
@@ -107,20 +121,6 @@ void print_order(Order_Queue *f_orders)
             temp.list = temp.list->next;
         }
     }
-}
-/* algo len_f_orders(f_order : ref to structure Order_Queue):int
-return the size of a linked list made of order_queue
-*/
-int len_f_orders(Order_Queue *f_orders)
-{
-    Order_Queue temp = *f_orders;
-    int nb = 0;
-    while (temp.list != NULL)
-    {
-        nb++;
-        temp.list = temp.list->next;
-    }
-    return nb;
 }
 
 // The function is taking an order as parameter and return an initialized cake with the right order
