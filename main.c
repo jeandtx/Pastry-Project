@@ -22,11 +22,13 @@ typedef struct Element_cake
 
 typedef struct Order_Queue
 {
-    Element_str *list;
+    struct Element_str *list;
 } Order_Queue;
 
 typedef struct Taste_Stack
-{ // TODO
+{
+    struct Element_str *tastes;
+
 } Taste_Stack;
 
 typedef struct Tasting_Queue
@@ -86,9 +88,12 @@ void pass_order(char order[50], Order_Queue *f_orders)
 
 // };
 
-// Cake *create_cake(Element_str *order){
-
-// };
+Cake *create_cake(Element_str *order)
+{
+    Cake *newcake = malloc(sizeof(Cake));
+    newcake->order = order;
+    return newcake;
+};
 
 // void build_Cake(Cake *cake, Element_str *l_tastes){
 
@@ -115,6 +120,10 @@ int main()
     pass_order("forder2", q_orders);
     pass_order("forder3", q_orders);
     printf("%s, %s, %s\n", q_orders->list->text, q_orders->list->next->text, q_orders->list->next->next->text);
+
+    Cake *cake = malloc(sizeof(Cake));
+    cake = create_cake(q_orders->list);
+
     Tasting_Queue *q_tasting;
 
     return 0;
