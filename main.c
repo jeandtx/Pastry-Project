@@ -53,19 +53,6 @@ Element_str *initialize_tastes()
     return new_el;
 };
 
-void display_tastes(Element_str *t)
-{
-    if (t->next != NULL)
-    {
-        printf("%s, ", t->text);
-        display_tastes(t->next);
-    }
-    else
-    {
-        printf(" ø\n");
-    }
-}
-
 void pass_order(char order[50], Order_Queue *f_orders)
 {
     Order_Queue *temp = f_orders;
@@ -88,16 +75,52 @@ void pass_order(char order[50], Order_Queue *f_orders)
 
 // };
 
+int len_f_orders(Order_Queue *f_orders)
+{
+    Order_Queue temp = *f_orders;
+    int nb = 0;
+    while (temp.list != NULL)
+    {
+        nb++;
+        temp.list = temp.list->next;
+    }
+    return nb;
+}
+
 Cake *create_cake(Element_str *order)
 {
     Cake *newcake = malloc(sizeof(Cake));
     newcake->order = order;
+    newcake->s_tastes = malloc(sizeof(Taste_Stack));
     return newcake;
 };
 
-// void build_Cake(Cake *cake, Element_str *l_tastes){
+void build_Cake(Cake *cake, Element_str *l_tastes)
+{
+    Cake *temp_cake = cake;
+    Element_str *temp_tastes = l_tastes;
 
-// };
+    int j = 0;
+    while (j < strlen(temp_cake->order->text))
+    {
+        for (int i = 0; i < 7; i++)
+        {
+            if (temp_cake->order->text[j] == temp_tastes->text[0])
+            {
+                temp_cake->s_tastes->tastes = malloc(sizeof(Element_str));
+                strcpy(temp_cake->s_tastes->tastes->text, temp_tastes->text);
+                // temp_cake->s_tastes->tastes = temp_cake->s_tastes->tastes->next;
+                j++;
+            }
+            else
+            {
+                temp_tastes = temp_tastes->next;
+                printf("%c didn't match with %s, %d\n", temp_cake->order->text[j], temp_tastes->text, j);
+            }
+        }
+        temp_tastes = l_tastes;
+    }
+};
 
 // void deliver(Cake *cake, Tasting_Queue *q_tasting){
 
@@ -112,17 +135,15 @@ int main()
     Element_str *l_tastes;
 
     l_tastes = initialize_tastes();
-    display_tastes(l_tastes);
 
     Order_Queue *q_orders = malloc(sizeof(Order_Queue));
 
-    pass_order("forder1", q_orders);
-    pass_order("forder2", q_orders);
-    pass_order("forder3", q_orders);
-    printf("%s, %s, %s\n", q_orders->list->text, q_orders->list->next->text, q_orders->list->next->next->text);
+    pass_order("AOB", q_orders);
 
     Cake *cake = malloc(sizeof(Cake));
     cake = create_cake(q_orders->list);
+
+    build_Cake(cake, l_tastes);
 
     Tasting_Queue *q_tasting;
 
