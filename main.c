@@ -61,16 +61,43 @@ void pass_order(char order[50], Order_Queue *f_orders)
     if (temp->list == NULL)
     {
         strcpy(new_el->text, order);
-        temp->list = new_el;
-    }
-    else
-    {
-        strcpy(new_el->text, order);
-        new_el->next = temp->list;
-        temp->list = new_el;
+        new_el->next = NULL;
+        if (temp->list == NULL)
+        {
+            temp->list = new_el;
+        }
+        else
+        {
+            Element_str* pElementStr = f_orders->list;
+            while(pElementStr->next != NULL){
+                pElementStr = pElementStr->next;
+            }
+            pElementStr->next = new_el;
+        }
     }
 }
 
+Element_str* process_order(Order_Queue* q_orders ){
+    Element_str *order;
+    if(q_orders->list == NULL){
+        return NULL;
+    } else {
+        order = q_orders->list;
+        q_orders->list = q_orders->list->next;
+    }
+
+    return order;
+}
+
+void print_order(Order_Queue *f_orders){
+    Order_Queue temp = *f_orders;
+    if (temp.list != NULL){
+        while (temp.list != NULL){
+            printf("%s \n",temp.list->text);
+            temp.list = temp.list->next;
+        }
+    }
+}
 // Element_str *process_order(Order_Queue *q_orders){
 
 // };
@@ -137,11 +164,12 @@ int main()
     l_tastes = initialize_tastes();
 
     Order_Queue *q_orders = malloc(sizeof(Order_Queue));
+    q_orders->list = NULL;
 
     pass_order("AOB", q_orders);
-
     Cake *cake = malloc(sizeof(Cake));
     cake = create_cake(q_orders->list);
+
 
     build_Cake(cake, l_tastes);
 
