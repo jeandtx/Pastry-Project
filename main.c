@@ -53,6 +53,16 @@ Element_str *initialize_tastes()
     return new_el;
 };
 
+int len_f_orders(Order_Queue *f_orders){
+    Order_Queue temp = *f_orders;
+    int nb = 0;
+    while(temp.list != NULL){
+        nb ++;
+        temp.list = temp.list->next;
+    }
+    return nb;
+}
+
 void display_tastes(Element_str *t)
 {
     if (t->next != NULL)
@@ -66,24 +76,52 @@ void display_tastes(Element_str *t)
     }
 }
 
-void pass_order(char order[50], Order_Queue *f_orders)
-{
-    Order_Queue *temp = f_orders;
-
-    Element_str *new_el = malloc(sizeof(Element_str));
-    if (temp->list == NULL)
-    {
+void pass_order(char order[50], Order_Queue *f_orders){
+    if (len_f_orders(f_orders)<10){
+        Order_Queue *temp = f_orders;
+        Element_str *new_el = malloc(sizeof(Element_str));
         strcpy(new_el->text, order);
-        temp->list = new_el;
-    }
-    else
-    {
-        strcpy(new_el->text, order);
-        new_el->next = temp->list;
-        temp->list = new_el;
+        new_el->next = NULL;
+        if (temp->list == NULL)
+        {
+            temp->list = new_el;
+        }
+        else
+        {
+            Element_str* pElementStr = f_orders->list;
+            while(pElementStr->next != NULL){
+                pElementStr = pElementStr->next;
+            }
+            pElementStr->next = new_el;
+        }
     }
 }
+void pop(Order_Queue *q_orders)
+{
+    Order_Queue;
+}
 
+Element_str* process_order(Order_Queue* q_orders ){
+    Element_str *order;
+    if(q_orders->list == NULL){
+        return NULL;
+    } else {
+        order = q_orders->list;
+        q_orders->list = q_orders->list->next;
+    }
+
+    return order;
+}
+
+void print_order(Order_Queue *f_orders){
+    Order_Queue temp = *f_orders;
+    if (temp.list != NULL){
+        while (temp.list != NULL){
+            printf("%s \n",temp.list->text);
+            temp.list = temp.list->next;
+        }
+    }
+}
 // Element_str *process_order(Order_Queue *q_orders){
 
 // };
@@ -112,19 +150,23 @@ int main()
     Element_str *l_tastes;
 
     l_tastes = initialize_tastes();
-    display_tastes(l_tastes);
+//    display_tastes(l_tastes);
 
     Order_Queue *q_orders = malloc(sizeof(Order_Queue));
+    q_orders->list = NULL;
 
-    pass_order("forder1", q_orders);
-    pass_order("forder2", q_orders);
-    pass_order("forder3", q_orders);
-    printf("%s, %s, %s\n", q_orders->list->text, q_orders->list->next->text, q_orders->list->next->next->text);
+    print_order(q_orders);
+    Element_str *test = process_order( q_orders );
+    process_order( q_orders );
+    process_order( q_orders );
+    print_order(q_orders);
 
-    Cake *cake = malloc(sizeof(Cake));
-    cake = create_cake(q_orders->list);
 
-    Tasting_Queue *q_tasting;
+//
+//    Cake *cake = malloc(sizeof(Cake));
+//    cake = create_cake(q_orders->list);
+//
+//    Tasting_Queue *q_tasting;
 
     return 0;
 }
