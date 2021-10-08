@@ -84,12 +84,12 @@ void pass_order(char order[50], Order_Queue *f_orders)
         new_el->next = NULL;
         if (temp->list == NULL)
         {
-            temp->list = new_el;    //if the list is empty fill it with new_el
+            temp->list = new_el; //if the list is empty fill it with new_el
         }
-        else   
+        else
         {
             Element_str *pElementStr = f_orders->list;
-            while (pElementStr->next != NULL)   //if not add it at the end of the list
+            while (pElementStr->next != NULL) //if not add it at the end of the list
             {
                 pElementStr = pElementStr->next;
             }
@@ -129,32 +129,27 @@ Cake *create_cake(Element_str *order)
     Cake *newcake = malloc(sizeof(Cake));
     newcake->order = order;
     newcake->s_tastes = malloc(sizeof(Taste_Stack)); // We need to allocate this variable because we will assign things in it later
+    newcake->s_tastes->tastes = malloc(sizeof(Element_str));
     return newcake;
 };
 
-// The function is a void it act on the cake and use the menu (l_tastes) to refer but not modify it
+// The function is a void it act on the cake and use the menu (l_tastes) to refer and check but not modify it
 void build_Cake(Cake *cake, Element_str *l_tastes)
 {
-    Cake *temp_cake = cake;
-    Element_str *temp_tastes = l_tastes;
-    // We need to temp because we will deal with both arguments
+    Element_str *temp_menu = l_tastes; // a temp on the menu to check all the tastes
+    Element_str *temp_tastes = cake->s_tastes->tastes; // a temp on the linked list of the cake to add tastes in the right order
     int j = 0;
-    while (j < strlen(temp_cake->order->text)) // While there's more tastes in the order
+    while (j < strlen((cake->order->text))) // While there's more tastes in the order
     {
-        for (int i = 0; i < 7; i++) // For each taste
+        while (cake->order->text[j] != temp_menu->text[0]) // While it didn't match with a taste from the menu !danger!->infinite loop
         {
-            if (temp_cake->order->text[j] == temp_tastes->text[0]) // Check if this is the one on the order
-            {
-                temp_cake->s_tastes->tastes = malloc(sizeof(Element_str));
-                strcpy(temp_cake->s_tastes->tastes->text, temp_tastes->text); // if yes add it to the cake
-                // temp_cake->s_tastes->tastes = temp_cake->s_tastes->tastes->next;
-                // Problem: it looks like the cake takes the first ingredient of the order but the line next is causing troubles
-                j++;
-            }
-            else // Otherwise go to the next flavor on the menu
-                temp_tastes = temp_tastes->next;
+            temp_menu = temp_menu->next;
         }
-        temp_tastes = l_tastes; // reset the temp because we made things with it
+        strcpy(temp_tastes->text, temp_menu->text); // Cooking
+        temp_tastes->next = malloc(sizeof(Element_str)); // Create next slice
+        temp_tastes = temp_tastes->next; // Go to next slice
+        j++;
+        temp_menu = l_tastes; // reset the temp because we made things with it and we need it clean
     }
 };
 
@@ -175,11 +170,12 @@ int main()
     Order_Queue *q_orders = malloc(sizeof(Order_Queue));
     q_orders->list = NULL;
 
-    pass_order("AOB", q_orders);
+    pass_order("SCOA", q_orders);
     Cake *cake = malloc(sizeof(Cake));
     cake = create_cake(q_orders->list);
 
     build_Cake(cake, l_tastes);
+    printf("Here is the cake\n %s, %s, %s, %s", cake->s_tastes->tastes->text, cake->s_tastes->tastes->next->text, cake->s_tastes->tastes->next->next->text, cake->s_tastes->tastes->next->next->next->text);
 
     Tasting_Queue *q_tasting;
 
