@@ -136,19 +136,18 @@ Cake *create_cake(Element_str *order)
 // The function is a void it act on the cake and use the menu (l_tastes) to refer and check but not modify it
 void build_Cake(Cake *cake, Element_str *l_tastes)
 {
-    Element_str *temp_menu = l_tastes;                 // a temp on the menu to check all the tastes
-    Element_str *temp_tastes = cake->s_tastes->tastes; // a temp on the linked list of the cake to add tastes in the right order
-    int j = 0;
-    while (j < strlen((cake->order->text))) // While there's more tastes in the order
+    Element_str *temp_menu = l_tastes;                    // a temp on the menu to check all the tastes
+    Element_str *temp_tastes = cake->s_tastes->tastes;    // a temp on the linked list of the cake to add tastes in the right order
+    for (int j = 0; j < strlen((cake->order->text)); j++) // While there's more tastes in the order
     {
         while (cake->order->text[j] != temp_menu->text[0]) // While it didn't match with a taste from the menu !danger!->infinite loop
         {
             temp_menu = temp_menu->next;
         }
-        strcpy(temp_tastes->text, temp_menu->text);      // Cooking
-        temp_tastes->next = malloc(sizeof(Element_str)); // Create next slice
-        temp_tastes = temp_tastes->next;                 // Go to next slice
-        j++;
+        Element_str *new_el = malloc(sizeof(Element_str));
+        strcpy(new_el->text, temp_menu->text);
+        new_el->next = cake->s_tastes->tastes;
+        cake->s_tastes->tastes = new_el;
         temp_menu = l_tastes; // reset the temp because we made things with it and we need it clean
     }
 };
@@ -174,21 +173,15 @@ void deliver(Cake *cake, Tasting_Queue *q_tasting)
 
 void tasting(Tasting_Queue *q_tasting, int nb_parts)
 {
-    if (nb_parts > 1)
+    if (nb_parts > 0)
     {
-        if (q_tasting->queue == NULL)
+        while (q_tasting->queue == NULL) // To review
         {
             q_tasting->queue = q_tasting->queue->next;
         }
         Cake *cake = q_tasting->queue->cake;
-        Element_str *taste = cake->s_tastes->tastes;
-        while (taste->next->next->next != NULL)
-        {
-            taste = taste->next;
-        }
-        Element_str *to_free = taste->next;
-        taste->next = NULL;
-        free(to_free);
+        printf("You just ate %s\n", cake->s_tastes->tastes->text);
+        cake->s_tastes->tastes = cake->s_tastes->tastes->next;
         tasting(q_tasting, nb_parts - 1);
     }
 };
