@@ -66,12 +66,12 @@ return the size of a linked list made of order_queue
 */
 int len_f_orders(Order_Queue *f_orders)
 {
-    Order_Queue temp = *f_orders;
+    Element_str *temp = f_orders->list;
     int nb = 0;
-    while (temp.list != NULL)
+    while (temp != NULL)
     {
         nb++;
-        temp.list = temp.list->next;
+        temp = temp->next;
     }
     return nb;
 }
@@ -145,22 +145,28 @@ Cake *create_cake(Element_str *order)
 void build_Cake(Cake *cake, Element_str *l_tastes)
 {
     printf("The chef is cooking the cake %s\n", cake->order->text);
-    Element_str *temp_menu = l_tastes;                    // a temp on the menu to check all the tastes
-    Element_str *temp_tastes = cake->s_tastes->tastes;    // a temp on the linked list of the cake to add tastes in the right order
-    for (int j = 0; j < strlen((cake->order->text)); j++) // While there's more tastes in the order
+    Element_str *temp_menu = l_tastes; // a temp on the menu to check all the tastes
+    if (cake->order == NULL)
     {
-        while (cake->order->text[j] != temp_menu->text[0]) // While it didn't match with a taste from the menu !danger!->infinite loop
-        {
-            temp_menu = temp_menu->next;
-        }
-        printf("\tAdding the taste %s to the cake\n", temp_menu->text);
-        Element_str *new_el = malloc(sizeof(Element_str));
-        strcpy(new_el->text, temp_menu->text);
-        new_el->next = cake->s_tastes->tastes;
-        cake->s_tastes->tastes = new_el;
-        temp_menu = l_tastes; // reset the temp because we made things with it and we need it clean
+        printf("Sorry there no place on the order queue 10 max\n");
     }
-    printf("Cake %s done!\n", cake->order->text);
+    else
+    {
+        for (int j = 0; j < strlen((cake->order->text)); j++) // While there's more tastes in the order
+        {
+            while (cake->order->text[j] != temp_menu->text[0]) // While it didn't match with a taste from the menu !danger!->infinite loop
+            {
+                temp_menu = temp_menu->next;
+            }
+            printf("\tAdding the taste %s to the cake\n", temp_menu->text);
+            Element_str *new_el = malloc(sizeof(Element_str));
+            strcpy(new_el->text, temp_menu->text);
+            new_el->next = cake->s_tastes->tastes;
+            cake->s_tastes->tastes = new_el;
+            temp_menu = l_tastes; // reset the temp because we made things with it and we need it clean
+        }
+        printf("Cake %s done!\n", cake->order->text);
+    }
 };
 
 void deliver(Cake *cake, Tasting_Queue *q_tasting)
@@ -220,18 +226,20 @@ void pastry()
     Tasting_Queue *q_tasting; // mandatory line
     q_tasting = malloc(sizeof(Tasting_Queue));
 
-    int n_cakes;
+    int n_cakes = 12;
     printf("How many cakes do you want ?\n");
-    scanf("%d", &n_cakes);
+    // scanf("%d", &n_cakes);
 
     for (int i = 0; i < n_cakes; i++)
     {
-        char *cmd;
+        char *cmd = "BAA";
         printf("Enter the first letter of tastes you want in the cake number %d\n!It is assumed that you won't type anything wrong!\n", i + 1);
-        scanf("%s", cmd);
+        // scanf("%s", cmd);
 
         pass_order(cmd, q_orders);
-
+    }
+    for (int i = 0; i < n_cakes; i++)
+    {
         Cake *cake = malloc(sizeof(Cake));
         cake = create_cake(process_order(q_orders));
 
@@ -239,10 +247,9 @@ void pastry()
 
         deliver(cake, q_tasting);
     }
-
     printf("How many parts do you want to taste ?\n");
-    scanf("%d", &n_cakes);
-    tasting(q_tasting, n_cakes);
+    // scanf("%d", &n_cakes);
+    tasting(q_tasting, n_cakes * 3);
 }
 
 int main()
