@@ -172,9 +172,26 @@ void deliver(Cake *cake, Tasting_Queue *q_tasting)
     }
 };
 
-// void tasting(Tasting_Queue *q_tasting, int nb_parts){
-
-// };
+void tasting(Tasting_Queue *q_tasting, int nb_parts)
+{
+    if (nb_parts > 1)
+    {
+        if (q_tasting->queue == NULL)
+        {
+            q_tasting->queue = q_tasting->queue->next;
+        }
+        Cake *cake = q_tasting->queue->cake;
+        Element_str *taste = cake->s_tastes->tastes;
+        while (taste->next->next->next != NULL)
+        {
+            taste = taste->next;
+        }
+        Element_str *to_free = taste->next;
+        taste->next = NULL;
+        free(to_free);
+        tasting(q_tasting, nb_parts - 1);
+    }
+};
 
 int main()
 {
@@ -190,11 +207,12 @@ int main()
     cake = create_cake(process_order(q_orders));
 
     build_Cake(cake, l_tastes);
-    printf("Here is the cake\n %s, %s, %s, %s", cake->s_tastes->tastes->text, cake->s_tastes->tastes->next->text, cake->s_tastes->tastes->next->next->text, cake->s_tastes->tastes->next->next->next->text);
+    printf("Here is the cake\n %s, %s, %s, %s\n", cake->s_tastes->tastes->text, cake->s_tastes->tastes->next->text, cake->s_tastes->tastes->next->next->text, cake->s_tastes->tastes->next->next->next->text);
 
     Tasting_Queue *q_tasting = malloc(sizeof(Tasting_Queue));
     deliver(cake, q_tasting);
-    deliver(cake, q_tasting);
+
+    tasting(q_tasting, 4);
 
     return 0;
 }
