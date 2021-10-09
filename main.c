@@ -49,7 +49,7 @@ Element_str *initialize_tastes()
     int cpt = 0;
     Element_str *temp = new_el;
     printf("Available tastes:\t");
-    while (cpt < 6) // There's 7 different tastes
+    while (cpt < 7) // There's 7 different tastes
     {
         temp->next = (Element_str *)malloc(sizeof(Element_str));
         strcpy(temp->text, local[cpt]); // In the loop we put the local index cpt
@@ -209,33 +209,44 @@ void tasting(Tasting_Queue *q_tasting, int nb_parts)
     }
 };
 
-int main()
+void pastry()
 {
     Element_str *l_tastes; // mandatory line
-
     l_tastes = initialize_tastes();
 
     Order_Queue *q_orders; // mandatory line
     q_orders = malloc(sizeof(Order_Queue));
 
-    pass_order("SCOA", q_orders);
-    pass_order("ABO", q_orders);
-
-    Cake *cake = malloc(sizeof(Cake));
-    cake = create_cake(process_order(q_orders));
-
-    Cake *cake2 = malloc(sizeof(Cake));
-    cake2 = create_cake(process_order(q_orders));
-
-    build_Cake(cake, l_tastes);
-    build_Cake(cake2, l_tastes);
-
     Tasting_Queue *q_tasting; // mandatory line
     q_tasting = malloc(sizeof(Tasting_Queue));
-    deliver(cake, q_tasting);
-    deliver(cake2, q_tasting);
 
-    tasting(q_tasting, 10);
+    int n_cakes;
+    printf("How many cakes do you want ?\n");
+    scanf("%d", &n_cakes);
 
+    for (int i = 0; i < n_cakes; i++)
+    {
+        char *cmd;
+        printf("Enter the first letter of tastes you want in the cake number %d\n!It is assumed that you won't type anything wrong!\n", i + 1);
+        scanf("%s", cmd);
+
+        pass_order(cmd, q_orders);
+
+        Cake *cake = malloc(sizeof(Cake));
+        cake = create_cake(process_order(q_orders));
+
+        build_Cake(cake, l_tastes);
+
+        deliver(cake, q_tasting);
+    }
+
+    printf("How many parts do you want to taste ?\n");
+    scanf("%d", &n_cakes);
+    tasting(q_tasting, n_cakes);
+}
+
+int main()
+{
+    pastry();
     return 0;
 }
