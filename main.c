@@ -32,7 +32,8 @@ typedef struct Taste_Stack
 } Taste_Stack;
 
 typedef struct Tasting_Queue
-{ // TODO
+{
+    struct Element_cake *queue;
 } Tasting_Queue;
 
 /*
@@ -78,22 +79,21 @@ void pass_order(char order[50], Order_Queue *f_orders)
 {
     if (len_f_orders(f_orders) < 10)
     {
-        Order_Queue *temp = f_orders;
         Element_str *new_el = malloc(sizeof(Element_str)); //allocate place for the new order in the list
         strcpy(new_el->text, order);
         new_el->next = NULL;
-        if (temp->list == NULL)
+        if (f_orders->list == NULL)
         {
-            temp->list = new_el; //if the list is empty fill it with new_el
+            f_orders->list = new_el; //if the list is empty fill it with new_el
         }
         else
         {
-            Element_str *pElementStr = f_orders->list;
-            while (pElementStr->next != NULL) //if not add it at the end of the list
+            Element_str *temp = f_orders->list;
+            while (temp->next != NULL) //if not add it at the end of the list
             {
-                pElementStr = pElementStr->next;
+                temp = temp->next;
             }
-            pElementStr->next = new_el;
+            temp->next = new_el;
         }
     }
 }
@@ -136,7 +136,7 @@ Cake *create_cake(Element_str *order)
 // The function is a void it act on the cake and use the menu (l_tastes) to refer and check but not modify it
 void build_Cake(Cake *cake, Element_str *l_tastes)
 {
-    Element_str *temp_menu = l_tastes; // a temp on the menu to check all the tastes
+    Element_str *temp_menu = l_tastes;                 // a temp on the menu to check all the tastes
     Element_str *temp_tastes = cake->s_tastes->tastes; // a temp on the linked list of the cake to add tastes in the right order
     int j = 0;
     while (j < strlen((cake->order->text))) // While there's more tastes in the order
@@ -145,17 +145,32 @@ void build_Cake(Cake *cake, Element_str *l_tastes)
         {
             temp_menu = temp_menu->next;
         }
-        strcpy(temp_tastes->text, temp_menu->text); // Cooking
+        strcpy(temp_tastes->text, temp_menu->text);      // Cooking
         temp_tastes->next = malloc(sizeof(Element_str)); // Create next slice
-        temp_tastes = temp_tastes->next; // Go to next slice
+        temp_tastes = temp_tastes->next;                 // Go to next slice
         j++;
         temp_menu = l_tastes; // reset the temp because we made things with it and we need it clean
     }
 };
 
-// void deliver(Cake *cake, Tasting_Queue *q_tasting){
-
-// };
+void deliver(Cake *cake, Tasting_Queue *q_tasting)
+{
+    Element_cake *new_el = malloc(sizeof(Element_cake));
+    new_el->cake = cake;
+    if (q_tasting->queue == NULL)
+    {
+        q_tasting->queue = new_el;
+    }
+    else
+    {
+        Element_cake *temp = q_tasting->queue;
+        while (temp->next != NULL)
+        {
+            temp = temp->next;
+        }
+        temp->next = new_el;
+    }
+};
 
 // void tasting(Tasting_Queue *q_tasting, int nb_parts){
 
@@ -168,16 +183,18 @@ int main()
     l_tastes = initialize_tastes();
 
     Order_Queue *q_orders = malloc(sizeof(Order_Queue));
-    q_orders->list = NULL;
 
     pass_order("SCOA", q_orders);
+    pass_order("SCOA", q_orders);
     Cake *cake = malloc(sizeof(Cake));
-    cake = create_cake(q_orders->list);
+    cake = create_cake(process_order(q_orders));
 
     build_Cake(cake, l_tastes);
     printf("Here is the cake\n %s, %s, %s, %s", cake->s_tastes->tastes->text, cake->s_tastes->tastes->next->text, cake->s_tastes->tastes->next->next->text, cake->s_tastes->tastes->next->next->next->text);
 
-    Tasting_Queue *q_tasting;
+    Tasting_Queue *q_tasting = malloc(sizeof(Tasting_Queue));
+    deliver(cake, q_tasting);
+    deliver(cake, q_tasting);
 
     return 0;
 }
