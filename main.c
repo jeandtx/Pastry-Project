@@ -92,7 +92,7 @@ void pass_order(char order[50], Order_Queue *f_orders)
     {
         Element_str *new_el = malloc(sizeof(Element_str)); //allocate place for the new order in the list
         allocs++;
-    
+
         strcpy(new_el->text, order);
         new_el->next = NULL;
         if (f_orders->list == NULL)
@@ -213,13 +213,9 @@ void tasting(Tasting_Queue *q_tasting, int nb_parts)
             free(to_free);
             allocs--;
             if (q_tasting->queue != NULL)
-            {
                 tasting(q_tasting, nb_parts);
-            }
             else
-            {
-                return;
-            }
+                printf("There's no more cakes, little greedy 😏😏😏😏😏😏\n");
         }
         else
         {
@@ -232,9 +228,7 @@ void tasting(Tasting_Queue *q_tasting, int nb_parts)
             tasting(q_tasting, nb_parts - 1);
         }
     }
-    
 }
-
 
 void free_element_str(Element_str *l_tastes)
 { // DONE
@@ -287,7 +281,6 @@ void free_element_cake(Element_cake *queue)
     }
     free(queue);
     allocs--;
-    
 }
 
 void free_q_tasting(Tasting_Queue *q_tasting)
@@ -307,21 +300,33 @@ void pastry()
 
     Order_Queue *q_orders; // mandatory line
     q_orders = malloc(sizeof(Order_Queue));
+    q_orders->list = NULL;
     allocs++;
 
     Tasting_Queue *q_tasting; // mandatory line
     q_tasting = malloc(sizeof(Tasting_Queue));
     allocs++;
+    q_tasting->queue = NULL;
 
     int n_cakes;
-    printf("How many cakes do you want ?\n");
-    scanf("%d", &n_cakes);
+    do
+    {
+        printf("How many cakes do you want ?\n");
+        scanf("%d", &n_cakes);
+    }
+    while (n_cakes <= 0);
+    
 
     for (int i = 0; i < n_cakes; i++)
     {
         char *cmd;
-        printf("Enter the first letter of tastes you want in the cake number %d\n!It is assumed that you won't type anything wrong!\n", i + 1);
+        printf("Enter the first letter of tastes you want in the cake number %d !\n", i + 1);
         scanf("%s", cmd);
+        while ((strlen(cmd) >= 50))
+        {
+            printf("Please control your hands !\n");
+            scanf("%s", cmd);
+        }
 
         pass_order(cmd, q_orders);
     }
@@ -335,15 +340,21 @@ void pastry()
 
         deliver(cake, q_tasting);
     }
-
+    int hungry = 1;
     int parts = 1;
-    while (q_tasting->queue->cake != NULL) // todo change condition here 
+    while ((q_tasting->queue != NULL) && hungry)
     {
         printf("How many parts do you want to taste ?\n");
         scanf("%d", &parts);
         tasting(q_tasting, parts);
+        printf("Are you still hungry if yes enter 1, else enter 0 ?\n");
+        scanf("%d", &hungry);
+        while ((hungry != 0) && (hungry != 1))
+        {
+            printf("Please control your hands !\n");
+            scanf("%d", &hungry);
+        }
     }
-    
     free_q_orders(q_orders);
     free_element_str(l_tastes);
     free_q_tasting(q_tasting);
@@ -352,6 +363,7 @@ void pastry()
 int main()
 {
     pastry();
-    printf("|||||%d||||||\n", allocs);
+    printf("|||||%d||||||\n\n", allocs);
+    // If you have troubles to run the code, especially on Clion, please try to run it on VScode or replit.com
     return 0;
 }
