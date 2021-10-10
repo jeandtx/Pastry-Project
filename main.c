@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 int allocs = 0;
 typedef struct Element_str
@@ -148,6 +149,7 @@ Cake *create_cake(Element_str *order)
     newcake->s_tastes = malloc(sizeof(Taste_Stack)); // We need to allocate this variable because we will assign things in it later
     allocs++;
     newcake->s_tastes->tastes = malloc(sizeof(Element_str));
+    newcake->s_tastes->tastes->text[0] = '0';
     allocs++;
     return newcake;
 };
@@ -180,6 +182,19 @@ void build_Cake(Cake *cake, Element_str *l_tastes)
         printf("Cake %s done!\n", cake->order->text);
     }
 };
+
+void rand_order(Order_Queue *f_orders){
+    char local[7] = {'V','C','S','O','A','B','F'};
+    char order[50] = " ";
+    int random;
+    srand(time(NULL));
+    for (int i = 0; i<5; i++){ //add 5 different flavor
+        random = rand()%7;
+        order[i] = local[random];
+    }
+    printf("\n\n%s\n\n",order);
+    pass_order(order,f_orders);
+}
 
 void deliver(Cake *cake, Tasting_Queue *q_tasting)
 {
@@ -315,7 +330,7 @@ void pastry()
         scanf("%d", &n_cakes);
     }
     while (n_cakes <= 0);
-    
+
 
     for (int i = 0; i < n_cakes; i++)
     {
@@ -328,7 +343,7 @@ void pastry()
             scanf("%s", cmd);
         }
 
-        pass_order(cmd, q_orders);
+        pass_order(cmd,q_orders);
     }
     for (int i = 0; i < n_cakes; i++)
     {
