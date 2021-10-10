@@ -1,7 +1,5 @@
 # Pastry-Project
 
-Dernier: October 10, 2021 11:40 AM
-
 ### Welcome in our repo!!
 
 ## The project
